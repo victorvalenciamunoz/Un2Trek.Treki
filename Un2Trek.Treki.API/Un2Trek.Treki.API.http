@@ -1,0 +1,6 @@
+@Un2Trek.Treki.API_HostAddress = http://localhost:5195
+
+GET {{Un2Trek.Treki.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

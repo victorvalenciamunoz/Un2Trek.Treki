@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Un2Trek.Trekis.API", "Un2Trek.Treki.API\Un2Trek.Trekis.API.csproj", "{E1E7E061-BD62-4987-A8E1-EF86B7A238E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Un2Trek.Trekis.Domain", "Un2Trek.Treki.Domain\Un2Trek.Trekis.Domain.csproj", "{7183BCC5-4B01-4D8B-86B3-FE4559999992}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Un2Trek.Trekis.Application", "Un2Trek.Treki.Application\Un2Trek.Trekis.Application.csproj", "{F459DB87-A39A-422F-AD33-79281D2625B8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Un2Trek.Trekis.Infrastructure", "Un2Trek.Treki.Infrastructure\Un2Trek.Trekis.Infrastructure.csproj", "{4A4934BF-0FE6-4186-A37B-1A64092C8272}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E1E7E061-BD62-4987-A8E1-EF86B7A238E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E1E7E061-BD62-4987-A8E1-EF86B7A238E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E1E7E061-BD62-4987-A8E1-EF86B7A238E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E1E7E061-BD62-4987-A8E1-EF86B7A238E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7183BCC5-4B01-4D8B-86B3-FE4559999992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7183BCC5-4B01-4D8B-86B3-FE4559999992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7183BCC5-4B01-4D8B-86B3-FE4559999992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7183BCC5-4B01-4D8B-86B3-FE4559999992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F459DB87-A39A-422F-AD33-79281D2625B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F459DB87-A39A-422F-AD33-79281D2625B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F459DB87-A39A-422F-AD33-79281D2625B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F459DB87-A39A-422F-AD33-79281D2625B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A4934BF-0FE6-4186-A37B-1A64092C8272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A4934BF-0FE6-4186-A37B-1A64092C8272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A4934BF-0FE6-4186-A37B-1A64092C8272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A4934BF-0FE6-4186-A37B-1A64092C8272}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A10367DF-C38E-42B6-BE55-F72F3B590705}
+	EndGlobalSection
+EndGlobal
