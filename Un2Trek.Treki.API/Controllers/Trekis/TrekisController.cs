@@ -64,6 +64,56 @@ public class TrekisController : ApiController
         }
     }
 
+    [HttpPut]
+    public async Task<IActionResult> UpdateTreki([FromBody] UpdateTrekiRequest updateTrekiRequest)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(new ProblemDetails
+            {
+                Title = "Invalid data",
+                Status = StatusCodes.Status400BadRequest,
+                Detail = "The provided data is invalid."
+            });
+        }
+
+        if (!CaptureType.TryFromValue(
+            updateTrekiRequest.CaptureType,
+            out var captureType))
+        {
+            return Problem("Invalid capture type", statusCode: StatusCodes.Status400BadRequest);
+        }
+
+        var command = new UpdateTrekiCommand(
+                TrekiId.From(updateTrekiRequest.Id),
+                new Location(updateTrekiRequest.Latitude, updateTrekiRequest.Longitude),
+                updateTrekiRequest.Title,
+                updateTrekiRequest.Description,
+                updateTrekiRequest.IsActive,
+                captureType
+            );
+
+        try
+        {
+            var updateTrekiResult= await _sender.Send(command);
+            if (updateTrekiResult.IsError)
+            {
+                return ProblemDetail(updateTrekiResult.Errors);
+            }
+
+            return Ok(updateTrekiResult.Value);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, new ProblemDetails
+            {
+                Title = "An error occurred",
+                Status = StatusCodes.Status500InternalServerError,
+                Detail = ex.Message
+            });
+        }
+    }
+
     [HttpPost("capture")]
     public async Task<IActionResult> CaptureTreki([FromBody] CaptureTrekiRequest captureTrekiRequest)
     {

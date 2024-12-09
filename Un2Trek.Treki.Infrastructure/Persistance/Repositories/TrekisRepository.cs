@@ -23,4 +23,10 @@ public sealed class TrekisRepository : ITrekisRepository
         await _dbContext.Trekis.AddAsync(treki);
         await _dbContext.SaveChangesAsync();
     }
+
+    public async Task UpdateTrekiAsync(Treki treki)
+    {
+        _dbContext.Trekis.Update(treki);
+        await _dbContext.SaveChangesAsync();
+    }
 }
