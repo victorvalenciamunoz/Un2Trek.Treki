@@ -26,6 +26,7 @@ namespace Un2Trek.Trekis.API
 
             return services;
         }
+        
         private static void AddSwaggerServices(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
@@ -139,6 +140,7 @@ namespace Un2Trek.Trekis.API
         public static void ConfigureSettings(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AppSettings>(configuration);
+            services.Configure<SendgridSettings>(configuration.GetSection(SendgridSettings.SectionName));
         }
     }
 }
