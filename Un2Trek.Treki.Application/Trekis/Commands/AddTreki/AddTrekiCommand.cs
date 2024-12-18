@@ -25,7 +25,7 @@ public class AddTrekiCommandHandler : IRequestHandler<AddTrekiCommand, TrekiId>
             request.CaptureType
         );
 
-        await _trekiRepository.AddTrekiAsync(treki);
+        await _trekiRepository.AddTrekiAsync(treki, cancellationToken);
 
         return treki.Id;
     }

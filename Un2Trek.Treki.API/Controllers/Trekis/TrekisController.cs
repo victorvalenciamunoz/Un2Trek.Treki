@@ -22,7 +22,7 @@ public class TrekisController : ApiController
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateTreki([FromBody] CreateTrekiRequest createTrekiRequest)
+    public async Task<IActionResult> CreateTreki([FromBody] CreateTrekiRequest createTrekiRequest, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -51,7 +51,7 @@ public class TrekisController : ApiController
 
         try
         {
-            var trekiId = await _sender.Send(command);
+            var trekiId = await _sender.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetTrekiById), new { id = trekiId }, trekiId);
         }
         catch (Exception ex)
@@ -66,7 +66,7 @@ public class TrekisController : ApiController
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateTreki([FromBody] UpdateTrekiRequest updateTrekiRequest)
+    public async Task<IActionResult> UpdateTreki([FromBody] UpdateTrekiRequest updateTrekiRequest, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -96,7 +96,7 @@ public class TrekisController : ApiController
 
         try
         {
-            var updateTrekiResult= await _sender.Send(command);
+            var updateTrekiResult= await _sender.Send(command, cancellationToken);
             if (updateTrekiResult.IsError)
             {
                 return ProblemDetail(updateTrekiResult.Errors);
@@ -116,7 +116,7 @@ public class TrekisController : ApiController
     }
 
     [HttpPost("capture")]
-    public async Task<IActionResult> CaptureTreki([FromBody] CaptureTrekiRequest captureTrekiRequest)
+    public async Task<IActionResult> CaptureTreki([FromBody] CaptureTrekiRequest captureTrekiRequest, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -132,7 +132,7 @@ public class TrekisController : ApiController
                                     TrekiId.From(new Guid(captureTrekiRequest.TrekiId)),
                                     ActivityId.From(new Guid(captureTrekiRequest.ActivityId)),
                                     new Location(captureTrekiRequest.Latitude, captureTrekiRequest.Longitude));
-        var commandResult = await _sender.Send(command);
+        var commandResult = await _sender.Send(command, cancellationToken);
         return commandResult.Match<IActionResult>(
      _ => Ok(),
      _ => ProblemDetail(commandResult.Errors));

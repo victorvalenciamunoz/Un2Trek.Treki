@@ -17,12 +17,12 @@ public class DesassignFromActivityCommandHandler : IRequestHandler<DesassignFrom
 
     public async Task<ErrorOr<Success>> Handle(DesassignFromActivityCommand request, CancellationToken cancellationToken)
     {
-        var trekiResult = await _activitiesTrekiRepository.GetTrekiByIdAsync(TrekiId.From(request.TrekiId));
+        var trekiResult = await _activitiesTrekiRepository.GetTrekiByIdAsync(TrekiId.From(request.TrekiId), cancellationToken);
         if (trekiResult.IsError)
         {
             return trekiResult.FirstError;
         }
-        var activityTrekiResult = await _activitiesTrekiRepository.GetActivityTrekiWithTrekisAsync(ActivityId.From(request.ActivityId));
+        var activityTrekiResult = await _activitiesTrekiRepository.GetActivityTrekiWithTrekisAsync(ActivityId.From(request.ActivityId), cancellationToken);
         if (activityTrekiResult.IsError)
         {
             return activityTrekiResult.FirstError;
@@ -34,7 +34,7 @@ public class DesassignFromActivityCommandHandler : IRequestHandler<DesassignFrom
             return assignmentResult.FirstError;
         }
 
-        await _activitiesTrekiRepository.SaveChangesAsync();
+        await _activitiesTrekiRepository.SaveChangesAsync(cancellationToken);
 
 
         return Result.Success;

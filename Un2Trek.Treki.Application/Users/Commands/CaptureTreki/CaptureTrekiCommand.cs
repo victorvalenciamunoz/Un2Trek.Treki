@@ -3,7 +3,6 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.ComponentModel;
 using Un2Trek.Trekis.Domain;
 using Un2Trek.Trekis.Domain.ValueObjects;
 
@@ -11,15 +10,15 @@ namespace Un2Trek.Trekis.Application;
 
 public record CaptureTrekiCommand(Guid UserId, TrekiId TrekiId, ActivityId ActivityId, Location userLocation) : IRequest<ErrorOr<Success>>;
 
-public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRepository, 
+public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRepository,
                                         ITrekisRepository trekisRepository,
                                         IActivitiesTrekiRepository activitiesTrekiRepository,
                                         IConfiguration configuration,
                                         UserManager<ApplicationUser> userManager) : IRequestHandler<CaptureTrekiCommand, ErrorOr<Success>>
-{    
+{
     public async Task<ErrorOr<Success>> Handle(CaptureTrekiCommand request, CancellationToken cancellationToken)
     {
-        var treki = await trekisRepository.GetByIdAsync(request.TrekiId);
+        var treki = await trekisRepository.GetByIdAsync(request.TrekiId, cancellationToken);
         if (treki == null)
         {
             return Error.NotFound(description: "Treki no encontrado");
@@ -34,8 +33,8 @@ public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRe
             return Error.NotFound(description: "Usuario no encontrado");
         }
 
-        var trekisInActivity = await activitiesTrekiRepository.GetTrekisByActivityIdAsync(request.ActivityId);
-        if (trekisInActivity == null || trekisInActivity.Count()==0)
+        var trekisInActivity = await activitiesTrekiRepository.GetTrekisByActivityIdAsync(request.ActivityId, cancellationToken);
+        if (trekisInActivity == null || trekisInActivity.Count() == 0)
         {
             return Error.NotFound(description: "Actividad sin Trekis");
         }
@@ -60,9 +59,9 @@ public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRe
         UserTrekiCapture capture = new UserTrekiCapture
         (
             trekiId: request.TrekiId,
-            activityId : request.ActivityId,
-            userId : request.UserId.ToString(),
-            captureDate : DateTime.UtcNow
+            activityId: request.ActivityId,
+            userId: request.UserId.ToString(),
+            captureDate: DateTime.UtcNow
         );
         await captureTrekisRepository.CaptureTrekiAsync(capture);
 

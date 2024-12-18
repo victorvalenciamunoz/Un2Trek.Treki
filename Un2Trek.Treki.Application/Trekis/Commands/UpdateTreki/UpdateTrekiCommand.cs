@@ -18,7 +18,7 @@ public class UpdateTrekiCommandHandler : IRequestHandler<UpdateTrekiCommand, Err
 
     public async Task<ErrorOr<Treki>> Handle(UpdateTrekiCommand request, CancellationToken cancellationToken)
     {
-        var treki = await _trekiRepository.GetByIdAsync(request.Id);
+        var treki = await _trekiRepository.GetByIdAsync(request.Id, cancellationToken);
         if (treki == null)
         {
             return Error.NotFound("Treki not found");
@@ -26,7 +26,7 @@ public class UpdateTrekiCommandHandler : IRequestHandler<UpdateTrekiCommand, Err
 
         treki.SetProperties(request.Id, request.Location, request.Title, request.Description, request.IsActive, request.CaptureType);
 
-        await _trekiRepository.UpdateTrekiAsync(treki);
+        await _trekiRepository.UpdateTrekiAsync(treki, cancellationToken);
 
         return treki;
     }

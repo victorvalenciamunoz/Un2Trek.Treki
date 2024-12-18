@@ -28,7 +28,7 @@ public class AddActivityCommandHandler : IRequestHandler<AddActivityCommand, Act
             ValidToDate = request.ValidToDate
         };
 
-        await _activitiesTrekiRepository.AddActivityTrekiAsync(activityTreki);
+        await _activitiesTrekiRepository.AddActivityTrekiAsync(activityTreki, cancellationToken);
 
         await _hybridCache.RemoveByTagAsync(CacheTags.ActiveActivities, cancellationToken);  
 

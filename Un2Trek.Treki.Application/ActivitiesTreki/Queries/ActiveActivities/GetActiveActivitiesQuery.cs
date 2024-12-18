@@ -25,7 +25,7 @@ public class GetActiveActivitiesHandler : IRequestHandler<GetActiveActivitiesQue
         var cachedActivities = await _hybridCache.GetOrCreateAsync("ActiveActivities",
             async token =>
             {
-                var activities = await _activitiesRepository.GetActiveActivitiesAsync();
+                var activities = await _activitiesRepository.GetActiveActivitiesAsync(cancellationToken);
                 return activities;
             },
             tags: new[] { CacheTags.ActiveActivities },

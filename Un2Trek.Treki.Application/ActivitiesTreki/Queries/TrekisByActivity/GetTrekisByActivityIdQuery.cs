@@ -17,7 +17,7 @@ public class GetTrekisByActivityIdQueryHandler : IRequestHandler<GetTrekisByActi
 
     public async Task<ErrorOr<List<Treki>>> Handle(GetTrekisByActivityIdQuery request, CancellationToken cancellationToken)
     {
-        var trekis = await _activitiesTrekiRepository.GetTrekisByActivityIdAsync(request.ActivityId);
+        var trekis = await _activitiesTrekiRepository.GetTrekisByActivityIdAsync(request.ActivityId, cancellationToken);
         return trekis;
     }
 }

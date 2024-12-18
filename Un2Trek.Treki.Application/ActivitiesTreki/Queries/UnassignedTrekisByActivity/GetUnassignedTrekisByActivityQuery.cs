@@ -17,7 +17,7 @@ public class GetUnassignedTrekisByActivityQueryHandler : IRequestHandler<GetUnas
 
     public async Task<ErrorOr<List<Treki>>> Handle(GetUnassignedTrekisByActivityQuery request, CancellationToken cancellationToken)
     {
-        var trekis = await _activitiesTrekiRepository.GetTrekisNotAssignedToActivityAsync(request.ActivityId);
+        var trekis = await _activitiesTrekiRepository.GetTrekisNotAssignedToActivityAsync(request.ActivityId, cancellationToken);
         return trekis;
     }
 }

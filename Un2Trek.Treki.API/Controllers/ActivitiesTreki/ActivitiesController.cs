@@ -23,7 +23,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost]  
-    public async Task<IActionResult> CreateActivity([FromBody] CreateActivityRequest createActivityRequest)
+    public async Task<IActionResult> CreateActivity([FromBody] CreateActivityRequest createActivityRequest, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -44,7 +44,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            var activityId = await _sender.Send(command);
+            var activityId = await _sender.Send(command, cancellationToken);
             return CreatedAtAction(nameof(GetActivityById), new { id = activityId }, activityId);
         }
         catch (Exception ex)
@@ -59,7 +59,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpPost("{activityId}/trekis/{trekiId}")]
-    public async Task<IActionResult> AssignTrekiToActivity(Guid activityId, Guid trekiId)
+    public async Task<IActionResult> AssignTrekiToActivity(Guid activityId, Guid trekiId, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -75,7 +75,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            await _sender.Send(command);
+            await _sender.Send(command, cancellationToken);
             return NoContent();
         }
         catch (Exception ex)
@@ -90,7 +90,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpDelete("{activityId}/trekis/{trekiId}")]
-    public async Task<IActionResult> DesassignTrekiFromActivity(Guid activityId, Guid trekiId)
+    public async Task<IActionResult> DesassignTrekiFromActivity(Guid activityId, Guid trekiId, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -106,7 +106,7 @@ public class ActivitiesController : ControllerBase
 
         try
         {
-            await _sender.Send(command);
+            await _sender.Send(command, cancellationToken);
             return NoContent();
         }
         catch (Exception ex)
@@ -121,7 +121,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet("{activityId}/trekis")]    
-    public async Task<IActionResult> GetTrekisByActivityId(Guid activityId)
+    public async Task<IActionResult> GetTrekisByActivityId(Guid activityId, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -134,7 +134,7 @@ public class ActivitiesController : ControllerBase
         }
 
         var command = new GetTrekisByActivityIdQuery(ActivityId.From(activityId));
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
         return result.Match(
         trekis => Ok(trekis.Select(t => new TrekiResponse
@@ -158,7 +158,7 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet("{activityId}/unassigned-trekis")]    
-    public async Task<IActionResult> GetTrekisNotAssignedToActivity(Guid activityId)
+    public async Task<IActionResult> GetTrekisNotAssignedToActivity(Guid activityId, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -171,7 +171,7 @@ public class ActivitiesController : ControllerBase
         }
 
         var command = new GetUnassignedTrekisByActivityQuery(ActivityId.From(activityId));
-        var result = await _sender.Send(command);
+        var result = await _sender.Send(command, cancellationToken);
 
         return result.Match(
         trekis => Ok(trekis.Select(t => new TrekiResponse
@@ -195,13 +195,13 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet]    
-    public async Task<IActionResult> GetActiveActivities()
+    public async Task<IActionResult> GetActiveActivities(CancellationToken cancellationToken)
     {
         try
         {
             var query = new GetActiveActivitiesQuery();
 
-            var result = await _sender.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
 
             return result.Match(
                 activities => Ok(activities.Select(a => new ActivityResponse
@@ -229,13 +229,13 @@ public class ActivitiesController : ControllerBase
     }
 
     [HttpGet("{id}")]    
-    public async Task<IActionResult> GetActivityById(Guid id)
+    public async Task<IActionResult> GetActivityById(Guid id, CancellationToken cancellationToken)
     {
         try
         {
             var query = new GetActivityByIdQuery(ActivityId.From(id));
 
-            var result = await _sender.Send(query);
+            var result = await _sender.Send(query, cancellationToken);
 
             return result.Match(
                 activity => Ok(new ActivityResponse

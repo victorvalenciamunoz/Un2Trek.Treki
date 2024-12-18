@@ -17,7 +17,7 @@ public class GetActivityByIdQueryHandler : IRequestHandler<GetActivityByIdQuery,
 
     public async Task<ErrorOr<ActivityTreki>> Handle(GetActivityByIdQuery request, CancellationToken cancellationToken)
     {
-        var activity = await _activitiesRepository.GetByIdAsync(request.activityId);
+        var activity = await _activitiesRepository.GetByIdAsync(request.activityId, cancellationToken);
         if (activity is null)
         {
             return Error.NotFound(description: "ActivityTreki not found");

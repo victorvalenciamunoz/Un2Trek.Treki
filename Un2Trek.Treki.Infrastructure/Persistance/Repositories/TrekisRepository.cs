@@ -13,20 +13,20 @@ public sealed class TrekisRepository : ITrekisRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Treki?> GetByIdAsync(TrekiId id)
+    public async Task<Treki?> GetByIdAsync(TrekiId id, CancellationToken cancellationToken)
     {
-        return await _dbContext.Trekis.FirstOrDefaultAsync(t => t.Id == id);
+        return await _dbContext.Trekis.FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
     }
 
-    public async Task AddTrekiAsync(Treki treki)
+    public async Task AddTrekiAsync(Treki treki, CancellationToken cancellationToken)
     {
-        await _dbContext.Trekis.AddAsync(treki);
-        await _dbContext.SaveChangesAsync();
+        _dbContext.Trekis.Add(treki);
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateTrekiAsync(Treki treki)
+    public async Task UpdateTrekiAsync(Treki treki, CancellationToken cancellationToken)
     {
         _dbContext.Trekis.Update(treki);
-        await _dbContext.SaveChangesAsync();
+        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }
