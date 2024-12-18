@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 using Un2Trek.Trekis.Application;
 using Un2Trek.Trekis.Domain;
@@ -26,7 +24,7 @@ namespace Un2Trek.Trekis.API
 
             return services;
         }
-        
+
         private static void AddSwaggerServices(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
@@ -75,17 +73,19 @@ namespace Un2Trek.Trekis.API
 
         private static IServiceCollection AddApiVersioning(this IServiceCollection services)
         {
-            services.AddApiVersioning(config =>
+            var apiVersioningBuilder = services.AddApiVersioning(config =>
             {
                 config.DefaultApiVersion = new ApiVersion(1, 0);
                 config.AssumeDefaultVersionWhenUnspecified = true;
                 config.ReportApiVersions = true;
             });
-            services.AddVersionedApiExplorer(options =>
+
+            apiVersioningBuilder.AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
             });
+
             return services;
         }
 

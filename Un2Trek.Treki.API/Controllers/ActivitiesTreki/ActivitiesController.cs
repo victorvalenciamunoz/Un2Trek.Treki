@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Un2Trek.Trekis.Application;
@@ -9,7 +10,7 @@ namespace Un2Trek.Trekis.API.Controllers;
 [ApiController]
 [Route("api/v{version:apiVersion}/[controller]")]
 [ApiVersion("1.0")]
-//[Authorize]
+[Authorize]
 public class ActivitiesController : ControllerBase
 {
     private readonly ISender _sender;
