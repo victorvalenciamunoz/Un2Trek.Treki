@@ -44,7 +44,7 @@ public sealed class ActivitiesTrekiRepository : IActivitiesTrekiRepository
 
         if (existingTreki is null)
         {
-            return Error.NotFound(description: "Treki not found");
+            return Error.NotFound(description: "Treki not found.");
         }
 
         return existingTreki;
