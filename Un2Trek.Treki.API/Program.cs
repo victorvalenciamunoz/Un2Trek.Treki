@@ -1,5 +1,6 @@
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Events;
 using Un2Trek.Trekis.API;
@@ -23,6 +24,17 @@ builder.Services.AddApiServices(builder.Configuration);
 
 
 var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    await using (var serviceScope = app.Services.CreateAsyncScope())
+    {
+       await using (var dbContext = serviceScope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
+        {
+            await dbContext.Database.MigrateAsync();
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
