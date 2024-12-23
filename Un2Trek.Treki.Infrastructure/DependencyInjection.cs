@@ -2,7 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Un2Trek.Trekis.Application;
+using Un2Trek.Trekis.Application.Abstractions.Users;
 using Un2Trek.Trekis.Infrastructure.Persistance;
+using Un2Trek.Trekis.Infrastructure.Persistance.Repositories;
 
 namespace Un2Trek.Trekis.Infrastructure;
 
@@ -24,6 +26,7 @@ public static class DependencyInjection
 
         services.AddScoped<ITrekisRepository, TrekisRepository>();  
         services.AddScoped<IActivitiesTrekiRepository, ActivitiesTrekiRepository>();
+        services.AddScoped<IUsersRepository, UsersRepository>();
         services.AddScoped<ICaptureTrekisRepository, CaptureTrekisRepository>();
 
         return services;

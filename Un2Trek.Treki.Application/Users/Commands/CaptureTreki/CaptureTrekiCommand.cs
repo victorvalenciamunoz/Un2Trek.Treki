@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Un2Trek.Trekis.Application.Abstractions.Users;
 using Un2Trek.Trekis.Domain;
 using Un2Trek.Trekis.Domain.ValueObjects;
 
@@ -13,8 +14,8 @@ public record CaptureTrekiCommand(Guid UserId, TrekiId TrekiId, ActivityId Activ
 public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRepository,
                                         ITrekisRepository trekisRepository,
                                         IActivitiesTrekiRepository activitiesTrekiRepository,
-                                        IConfiguration configuration,
-                                        UserManager<ApplicationUser> userManager) : IRequestHandler<CaptureTrekiCommand, ErrorOr<Success>>
+                                        IUsersRepository usersRepository,
+                                        IConfiguration configuration) : IRequestHandler<CaptureTrekiCommand, ErrorOr<Success>>
 {
     public async Task<ErrorOr<Success>> Handle(CaptureTrekiCommand request, CancellationToken cancellationToken)
     {
@@ -24,9 +25,7 @@ public class CaptureTrekiCommandHandler(ICaptureTrekisRepository captureTrekisRe
             return Error.NotFound(description: "Treki no encontrado");
         }
 
-        var user = await userManager.Users
-                                        .Include(u => u.UserTrekiCaptures)
-                                        .FirstOrDefaultAsync(u => u.Id == request.UserId.ToString(), cancellationToken);
+        var user = await usersRepository.GetUserWithCapturesAsync(request.UserId.ToString(), cancellationToken);
 
         if (user == null)
         {
