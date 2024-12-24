@@ -1,0 +1,29 @@
+name: Treki.API CI
+
+on:
+  push:
+    branches: [ "develop" ]
+
+jobs:
+  build:
+    name : Treki.API CI Job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0
+
+      - name: dotnet test
+        run: dotnet test --configuration Release --no-build
+  
+      - name: dotnet publish
+        run: dotnet publish Un2Trek.Treki.API/Un2Trek.Trekis.API.csproj --configuration Release -o artifacts
+  
+      - uses: actions/upload-artifact@v4
+        with:
+            name: treki.api-artifact
+            path: artifacts/
