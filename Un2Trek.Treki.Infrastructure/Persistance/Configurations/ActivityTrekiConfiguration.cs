@@ -31,5 +31,9 @@ public class ActivityTrekiConfiguration : IEntityTypeConfiguration<ActivityTreki
         builder.HasMany(at => at.ActivityTrekiTrekis)
             .WithOne(att => att.ActivityTreki)
             .HasForeignKey(att => att.ActivityTrekiId);
+
+        builder
+            .Property<byte[]>("RowVersion")
+            .IsRowVersion();
     }
 }
