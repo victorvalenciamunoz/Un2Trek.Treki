@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name : Treki.API CI Job
+    name: Treki.API CI Job
     runs-on: windows-latest
 
     steps:
@@ -25,22 +25,24 @@ jobs:
   
       - uses: actions/upload-artifact@v4
         with:
-            name: treki.api-artifact
-            path: artifacts/
+          name: treki.api-artifact
+          path: artifacts/
       
       - name: Create EF migration bundle
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef migrations bundle --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj --output efbundle 
+          dotnet ef migrations bundle --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj --output efbundle
 
       - name: Run EF Migrations
-        run: ./efbundle --connection "${{secrets.DB_CONNECTION_STRING}}"
+        run: ./efbundle --connection "${{ secrets.DB_CONNECTION_STRING }}"
 
       - name: Deploy to Simply        
         uses: talunzhang/auto-web-deploy@v1.0.1
         with:
           website-name: ${{ secrets.SITE_NAME }} 
-          server-computer-name: ${{secrets.SERVER_COMPUTER_NAME}}
-          server-username: ${{secrets.SERVER_USER_NAME}}
-          server-password: ${{secrets.SERVER_PASSWORD}}
-          source-path: artifacts/     
+          server-computer-name: ${{ secrets.SERVER_COMPUTER_NAME }}
+          server-username: ${{ secrets.SERVER_USER_NAME }}
+          server-password: ${{ secrets.SERVER_PASSWORD }}
+          source-path: artifacts/
