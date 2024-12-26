@@ -27,3 +27,12 @@ jobs:
         with:
             name: treki.api-artifact
             path: artifacts/
+      
+      - name: Deploy to Simply        
+        uses: talunzhang/auto-web-deploy@v1.0.1
+        with:
+          website-name: ${{ secrets.SITE_NAME }} 
+          server-computer-name: ${{secrets.SERVER_COMPUTER_NAME}}
+          server-username: ${{secrets.SERVER_USER_NAME}}
+          server-password: ${{secrets.SERVER_PASSWORD}}
+          source-path: artifacts/     
