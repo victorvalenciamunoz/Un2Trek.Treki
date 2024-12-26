@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     name : Treki.API CI Job
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
