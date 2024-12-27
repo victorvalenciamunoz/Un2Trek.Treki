@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Un2Trek.Trekis.Domain;
 
 namespace Un2Trek.Trekis.Infrastructure;
