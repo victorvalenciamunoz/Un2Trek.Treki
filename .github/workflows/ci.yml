@@ -33,20 +33,21 @@ jobs:
           ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef migrations bundle --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj --output efbundle
+          dotnet ef migrations bundle --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj --output efbundle.exe
+      
+      - uses: actions/upload-artifact@v4
+        with:
+          name: efbundle
+          path: efbundle.exe
+    
+      - name: Download EF migration bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: efbundle
+          path: .
 
       - name: Run EF Migrations
-        run: ./efbundle --connection "${{ secrets.DB_CONNECTION_STRING }}"
-
-      - name: Capture EF Migration Logs
-        run: ./efbundle --connection "${{ secrets.DB_CONNECTION_STRING }}" > ef-migration-log.txt
-        continue-on-error: true
-
-      - name: Upload Migration Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: migration-logs
-          path: ef-migration-log.txt
+        run: ./efbundle.exe --connection "${{ secrets.DB_CONNECTION_STRING }}"
 
       - name: Deploy to Simply        
         uses: talunzhang/auto-web-deploy@v1.0.1
