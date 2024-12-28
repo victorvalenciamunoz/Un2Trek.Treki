@@ -15,10 +15,13 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 builder.Host.UseSerilog();
 
+var loggerFactory = LoggerFactory.Create(loggingBuilder => { loggingBuilder.AddSerilog(); });
+builder.Services.AddSingleton<ILoggerFactory>(loggerFactory);
+
 builder.Services.AddControllers();
 
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration, loggerFactory);
 builder.Services.AddApiServices(builder.Configuration);
 
 
