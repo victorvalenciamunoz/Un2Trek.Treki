@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Un2Trek.Trekis.Domain;
-using Ardalis.SmartEnum;
 
 namespace Un2Trek.Trekis.Infrastructure.Persistance;
 
@@ -38,6 +37,10 @@ public class TrekiConfiguration : IEntityTypeConfiguration<Treki>
         builder.HasMany(t => t.ActivityTrekiTrekis)
             .WithOne(att => att.Treki)
             .HasForeignKey(att => att.TrekiId);
+
+        builder
+         .Property<byte[]>("RowVersion")
+         .IsRowVersion();
     }
 }
 
