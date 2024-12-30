@@ -6,44 +6,24 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
-using System.Reflection;
 
 public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Construir configuración para cargar variables de entorno, argumentos de línea de comandos y User Secrets
-        var configurationBuilder = new ConfigurationBuilder()
+        // Construir configuración para cargar variables de entorno y argumentos de línea de comandos
+        var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddEnvironmentVariables() // Agregar variables de entorno
-            .AddUserSecrets(Assembly.Load("Un2Trek.Trekis.API")); // Agregar User Secrets
-
-        if (args != null && args.Length > 0)
-        {
-            // Agregar argumentos de línea de comandos a la configuración
-            configurationBuilder.AddCommandLine(args);
-        }
-
-        // Cargar archivos de configuración si existen
-        if (File.Exists("appsettings.json"))
-        {
-            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        }
-
-        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-        if (!string.IsNullOrEmpty(environment) && File.Exists($"appsettings.{environment}.json"))
-        {
-            configurationBuilder.AddJsonFile($"appsettings.{environment}.json", optional: true);
-        }
-
-        var configuration = configurationBuilder.Build();
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .AddCommandLine(args) // Agregar argumentos de línea de comandos
+            .Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        // Obtener la cadena de conexión desde argumentos, variables de entorno o configuración
+        // Obtener la cadena de conexión desde argumentos o configuración
         var connectionString = configuration["connection"] // Desde argumentos (--connection)
-                            ?? configuration.GetConnectionString("DefaultConnection") // Desde archivos de configuración
-                            ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"); // Desde variables de entorno
+                            ?? configuration.GetConnectionString("DefaultConnection"); // Desde archivos de configuración
 
         if (string.IsNullOrEmpty(connectionString))
         {
@@ -59,4 +39,3 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }
-
