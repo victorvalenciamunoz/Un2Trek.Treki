@@ -11,25 +11,48 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Construir configuración para cargar variables de entorno y argumentos de línea de comandos
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables()
-            .AddCommandLine(args) // Agregar argumentos de línea de comandos
-            .Build();
+        // Leer la cadena de conexión directamente de los argumentos
+        string connectionString = null;
 
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        if (args != null)
+        {
+            for (int i = 0; i < args.Length; i++)
+            {
+                var arg = args[i];
 
-        // Obtener la cadena de conexión desde argumentos o configuración
-        var connectionString = configuration["connection"] // Desde argumentos (--connection)
-                            ?? configuration.GetConnectionString("DefaultConnection"); // Desde archivos de configuración
+                if (arg.Equals("--connection", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+                {
+                    connectionString = args[i + 1];
+                    break;
+                }
+                else if (arg.StartsWith("--connection=", StringComparison.OrdinalIgnoreCase))
+                {
+                    connectionString = arg.Substring("--connection=".Length);
+                    break;
+                }
+            }
+        }
+
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            // Construir configuración para cargar variables de entorno y archivos JSON
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile($"appsettings.{environment}.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
+
+            connectionString = configuration.GetConnectionString("DefaultConnection");
+        }
 
         if (string.IsNullOrEmpty(connectionString))
         {
             throw new InvalidOperationException("Connection string 'DefaultConnection' is not defined.");
         }
 
+        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(connectionString);
 
         // Configurar logging opcionalmente
