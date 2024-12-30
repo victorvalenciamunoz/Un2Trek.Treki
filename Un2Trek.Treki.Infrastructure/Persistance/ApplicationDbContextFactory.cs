@@ -12,20 +12,38 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Construir configuración para cargar variables de entorno y User Secrets
-        var configuration = new ConfigurationBuilder()
+        // Construir configuración para cargar variables de entorno, argumentos de línea de comandos y User Secrets
+        var configurationBuilder = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true) // Agregar appsettings.json
-            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true) // Agregar appsettings.{Environment}.json
             .AddEnvironmentVariables() // Agregar variables de entorno
-            .AddUserSecrets(Assembly.Load("Un2Trek.Trekis.API"))
-            .Build();
+            .AddUserSecrets(Assembly.Load("Un2Trek.Trekis.API")); // Agregar User Secrets
+
+        if (args != null && args.Length > 0)
+        {
+            // Agregar argumentos de línea de comandos a la configuración
+            configurationBuilder.AddCommandLine(args);
+        }
+
+        // Cargar archivos de configuración si existen
+        if (File.Exists("appsettings.json"))
+        {
+            configurationBuilder.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+        }
+
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        if (!string.IsNullOrEmpty(environment) && File.Exists($"appsettings.{environment}.json"))
+        {
+            configurationBuilder.AddJsonFile($"appsettings.{environment}.json", optional: true);
+        }
+
+        var configuration = configurationBuilder.Build();
 
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        // Obtener la cadena de conexión desde variables de entorno o User Secrets
-        var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                            ?? configuration.GetConnectionString("DefaultConnection");
+        // Obtener la cadena de conexión desde argumentos, variables de entorno o configuración
+        var connectionString = configuration["connection"] // Desde argumentos (--connection)
+                            ?? configuration.GetConnectionString("DefaultConnection") // Desde archivos de configuración
+                            ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"); // Desde variables de entorno
 
         if (string.IsNullOrEmpty(connectionString))
         {
