@@ -28,15 +28,30 @@ jobs:
           name: treki.api-artifact
           path: artifacts/
       
-      - name: Create EF migration bundle
+      - name: Generate EF migration script
         env:
-          ConnectionStrings__DefaultConnection: ${{ secrets.DB_CONNECTION_STRING }}
+          ConnectionStrings__DefaultConnection: "Data Source=${{ secrets.DB_SERVER }};Initial Catalog=${{ secrets.DB_DATABASE_NAME }};Integrated Security=False;User Id=${{ secrets.DB_USERNAME }};Password=${{ secrets.DB_USERPASS }};MultipleActiveResultSets=True"
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef migrations bundle --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj --output efbundle.exe
- 
+          dotnet ef migrations script --idempotent --output migration.sql --project ./Un2Trek.Treki.Infrastructure/Un2Trek.Trekis.Infrastructure.csproj --startup-project ./Un2Trek.Treki.API/Un2Trek.Trekis.Api.csproj
+
+      - name: Upload migration script
+        uses: actions/upload-artifact@v4
+        with:
+          name: migration-script
+          path: migration.sql
+
+      - name: Download migration script
+        uses: actions/download-artifact@v4
+        with:
+          name: migration-script
+          path: .
+
       - name: Run EF Migrations
-        run: ./efbundle.exe --connection "${{ secrets.DB_CONNECTION_STRING }}"
+        env:
+          SQLCMDUSER: ${{ secrets.DB_USERNAME }}
+          SQLCMDPASSWORD: ${{ secrets.DB_USERPASS }}
+        run: sqlcmd -S ${{ secrets.DB_SERVER }} -d ${{ secrets.DB_DATABASE_NAME }} -U ${{ env.SQLCMDUSER }} -P ${{ env.SQLCMDPASSWORD }} -i migration.sql
 
       - name: Deploy to Simply        
         uses: talunzhang/auto-web-deploy@v1.0.1
